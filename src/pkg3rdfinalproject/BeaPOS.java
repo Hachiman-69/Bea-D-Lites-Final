@@ -14,6 +14,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  *
@@ -21,6 +26,14 @@ import java.time.format.DateTimeFormatter;
  */
 public class BeaPOS extends javax.swing.JFrame {
     
+    
+
+private List<OrderItem> orderList = new ArrayList<>();
+private DefaultTableModel billTableModel;
+
+    
+
+   
    
     
     
@@ -122,6 +135,12 @@ public class BeaPOS extends javax.swing.JFrame {
                 confirmExit();
             }
         });
+        billItemsPanel.setLayout(new BoxLayout(billItemsPanel, BoxLayout.Y_AXIS));
+        billTableModel = new DefaultTableModel(
+    new String[]{"Product", "Qty", "Size/Variation", "Unit Price", "Subtotal"}, 0
+);
+billTable.setModel(billTableModel);
+billTable.setEnabled(false); // Optional: makes the table non-editable
         
     LocalDate today = LocalDate.now();
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
@@ -133,6 +152,9 @@ public class BeaPOS extends javax.swing.JFrame {
     mangoBasePrice = 699;
     mangoBravocurrentSelectedSize = "6x2";
     updateMangoPrice();
+    if (mangoRadioButton.isSelected()) {
+        addOrUpdateOrderItem(new OrderItem("Mango Bravo", mangoQty, mangoBravocurrentSelectedSize, mangoBasePrice));
+    }
     
     });
     
@@ -140,6 +162,9 @@ public class BeaPOS extends javax.swing.JFrame {
     mangoBasePrice = 399;
     mangoBravocurrentSelectedSize = "5x2";
     updateMangoPrice();
+    if (mangoRadioButton.isSelected()) {
+        addOrUpdateOrderItem(new OrderItem("Mango Bravo", mangoQty, mangoBravocurrentSelectedSize, mangoBasePrice));
+    }
     
     });
     
@@ -147,6 +172,9 @@ public class BeaPOS extends javax.swing.JFrame {
     mangoBasePrice = 299;
     mangoBravocurrentSelectedSize = "4x2";
     updateMangoPrice();
+    if (mangoRadioButton.isSelected()) {
+        addOrUpdateOrderItem(new OrderItem("Mango Bravo", mangoQty, mangoBravocurrentSelectedSize, mangoBasePrice));
+    }
     
     });
 
@@ -156,12 +184,18 @@ public class BeaPOS extends javax.swing.JFrame {
     redVelvetBasePrice = 799;
     redVelvetCurrentSelectedSize = "6x2";
     updateRedVelvetPrice();
+    if (redVelvetRadioButton.isSelected()) {
+        addOrUpdateOrderItem(new OrderItem("Red Velvet Cake", redVelvetQty, redVelvetCurrentSelectedSize, redVelvetBasePrice));
+    }
     });
     
     redVelvet5x2sizeButton.addActionListener(e->{
     redVelvetBasePrice = 499;
     redVelvetCurrentSelectedSize = "5x2";
     updateRedVelvetPrice();
+    if (redVelvetRadioButton.isSelected()) {
+        addOrUpdateOrderItem(new OrderItem("Red Velvet Cake", redVelvetQty, redVelvetCurrentSelectedSize, redVelvetBasePrice));
+    }
     });
     
     
@@ -333,76 +367,113 @@ public class BeaPOS extends javax.swing.JFrame {
     //actionlisteners for radiobuttons
     mangoRadioButton.addActionListener(e -> {
     if (mangoRadioButton.isSelected()) {
-        updateMangoBravoBill();
+        addOrUpdateOrderItem(new OrderItem(
+            "Mango Bravo", mangoQty, mangoBravocurrentSelectedSize, mangoBasePrice
+        ));
     } else {
-        removeMangoBravoFromBill();
+        removeOrderItem("Mango Bravo");
     }
 });
    
     redVelvetRadioButton.addActionListener(e -> {
     if (redVelvetRadioButton.isSelected()) {
-        updateRedVelvetBill();
+        addOrUpdateOrderItem(new OrderItem(
+            "Red Velvet Cake", redVelvetQty, redVelvetCurrentSelectedSize, redVelvetBasePrice
+        ));
     } else {
-        removeRedVelvetFromBill();
+        removeOrderItem("Red Velvet Cake");
     }
 });
       }
+    
+    
+    private void refreshBillTable() {
+    billTableModel.setRowCount(0); // Clear rows
+    for (OrderItem item : orderList) {
+        billTableModel.addRow(new Object[]{
+            item.getProductName(),
+            item.getQuantity(),
+            item.getSizeOrVariation(),
+            String.format("₱%.2f", item.getUnitPrice()),
+            String.format("₱%.2f", item.getSubtotal())
+        });
+    }
+}
+
+private void addOrUpdateOrderItem(OrderItem newItem) {
+    for (OrderItem item : orderList) {
+        if (item.getProductName().equals(newItem.getProductName())) {
+            item.setQuantity(newItem.getQuantity());
+            item.setSizeOrVariation(newItem.getSizeOrVariation());
+            item.setUnitPrice(newItem.getUnitPrice());
+            refreshBillTable();
+            return;
+        }
+    }
+    orderList.add(newItem);
+    refreshBillTable();
+}
+
+private void removeOrderItem(String productName) {
+    orderList.removeIf(item -> item.getProductName().equals(productName));
+    refreshBillTable();
+}
     //methods for actionListeners
-private void removeMangoBravoFromBill() {
-    subTotalamountlabel.setText("₱0.00");
-    totalAmountLabel.setText("₱0.00");
-    productNameLabel.setText("");
-    quantityLabel.setText("");
-    sizeorVariationLabel.setText("");
-}
-private void removeRedVelvetFromBill() {
-    subTotalamountlabel.setText("₱0.00");
-    totalAmountLabel.setText("₱0.00");
-    productNameLabel.setText("");
-    quantityLabel.setText("");
-    sizeorVariationLabel.setText("");
-}
+//private void removeMangoBravoFromBill() {
+//    subTotalamountlabel.setText("₱0.00");
+//    totalAmountLabel.setText("₱0.00");
+//    productNameLabel.setText("");
+//    quantityLabel.setText("");
+//    sizeorVariationLabel.setText("");
+//}
+//private void removeRedVelvetFromBill() {
+//    subTotalamountlabel.setText("₱0.00");
+//    totalAmountLabel.setText("₱0.00");
+//    productNameLabel.setText("");
+//    quantityLabel.setText("");
+//    sizeorVariationLabel.setText("");
+//}
 
-
-public void updateMangoBravoBill() {
-    
-    double unitPrice = 0.0;
-    String size = "";
-    switch(mangoBravocurrentSelectedSize) {
-        case "6x2": size = "6 x 2\""; unitPrice = 699.00; break;
-        case "5x2": size = "5 x 2\""; unitPrice = 399.00; break;
-        case "4x2": size = "4 x 2\""; unitPrice = 299.00; break;
-        default: size = "Unknown Size"; unitPrice = 0.0; break;
-    }
-    double subtotal = mangoQty * unitPrice;
-    // update the bill panel labels
-    subTotalamountlabel.setText(String.format("₱%.2f", subtotal));
-    totalAmountLabel.setText(String.format("₱%.2f", subtotal));
-    productNameLabel.setText("Mango Bravo");
-    quantityLabel.setText(String.valueOf(mangoQty));
-    sizeorVariationLabel.setText(size);
-
-}
- 
- public void updateRedVelvetBill() {
-    
-    double unitPrice = 0.0;
-    String size = "";
-    switch(redVelvetCurrentSelectedSize) {
-        case "6x2": size = "6 x 2\""; unitPrice = 799.00; break;
-        case "5x2": size = "5 x 2\""; unitPrice = 499.00; break;
-       
-        default: size = "Unknown Size"; unitPrice = 0.0; break;
-    }
-    double subtotal = redVelvetQty * unitPrice;
-    
-    subTotalamountlabel.setText(String.format("₱%.2f", subtotal));
-    totalAmountLabel.setText(String.format("₱%.2f", subtotal));
-    productNameLabel.setText("Red Velvet");
-    quantityLabel.setText(String.valueOf(redVelvetQty));
-    sizeorVariationLabel.setText(size);
-
-}
+//
+//public void updateMangoBravoBill() {
+//    
+//    double unitPrice = 0.0;
+//    String size = "";
+//    switch(mangoBravocurrentSelectedSize) {
+//        case "6x2": size = "6 x 2\""; unitPrice = 699.00; break;
+//        case "5x2": size = "5 x 2\""; unitPrice = 399.00; break;
+//        case "4x2": size = "4 x 2\""; unitPrice = 299.00; break;
+//        default: size = "Unknown Size"; unitPrice = 0.0; break;
+//    }
+//    double subtotal = mangoQty * unitPrice;
+//    // update the bill panel labels
+//    subTotalamountlabel.setText(String.format("₱%.2f", subtotal));
+//    totalAmountLabel.setText(String.format("₱%.2f", subtotal));
+//    productNameLabel.setText("Mango Bravo");
+//    quantityLabel.setText(String.valueOf(mangoQty));
+//    sizeorVariationLabel.setText(size);
+//
+//}
+// 
+// public void updateRedVelvetBill() {
+//    
+//    double unitPrice = 0.0;
+//    String size = "";
+//    switch(redVelvetCurrentSelectedSize) {
+//        case "6x2": size = "6 x 2\""; unitPrice = 799.00; break;
+//        case "5x2": size = "5 x 2\""; unitPrice = 499.00; break;
+//       
+//        default: size = "Unknown Size"; unitPrice = 0.0; break;
+//    }
+//    double subtotal = redVelvetQty * unitPrice;
+//    
+//    subTotalamountlabel.setText(String.format("₱%.2f", subtotal));
+//    totalAmountLabel.setText(String.format("₱%.2f", subtotal));
+//    productNameLabel.setText("Red Velvet");
+//    quantityLabel.setText(String.valueOf(redVelvetQty));
+//    sizeorVariationLabel.setText(size);
+//
+//}
     
     
     
@@ -446,21 +517,11 @@ public void updateMangoBravoBill() {
         dashLinelabel1 = new javax.swing.JLabel();
         BillLabel = new javax.swing.JLabel();
         dateLabel = new javax.swing.JLabel();
-        dashLineLabel2 = new javax.swing.JLabel();
-        productStaticLabel = new javax.swing.JLabel();
-        productNameLabel = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
-        quantityLabel = new javax.swing.JLabel();
-        sizeorvariationstaticLabel = new javax.swing.JLabel();
-        sizeorVariationLabel = new javax.swing.JLabel();
-        dashLineLabel3 = new javax.swing.JLabel();
-        subtotalstaticlabel = new javax.swing.JLabel();
-        totalstaticlabel = new javax.swing.JLabel();
-        subTotalamountlabel = new javax.swing.JLabel();
-        totalAmountLabel = new javax.swing.JLabel();
         jToggleButton2 = new javax.swing.JToggleButton();
         jToggleButton3 = new javax.swing.JToggleButton();
         jButton9 = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        billTable = new javax.swing.JTable();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel71 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -776,7 +837,7 @@ public void updateMangoBravoBill() {
                 .addComponent(jLabel6)
                 .addGap(81, 81, 81)
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(574, Short.MAX_VALUE))
+                .addContainerGap(570, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -868,56 +929,6 @@ public void updateMangoBravoBill() {
         dateLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         dateLabel.setText("day");
 
-        dashLineLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        dashLineLabel2.setForeground(new java.awt.Color(255, 204, 102));
-        dashLineLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        dashLineLabel2.setText("------------------------");
-
-        productStaticLabel.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
-        productStaticLabel.setForeground(new java.awt.Color(0, 0, 0));
-        productStaticLabel.setText("- Product");
-
-        productNameLabel.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
-        productNameLabel.setForeground(new java.awt.Color(102, 102, 102));
-        productNameLabel.setText("Product name");
-
-        jLabel14.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel14.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel14.setText("Quantity");
-
-        quantityLabel.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
-        quantityLabel.setForeground(new java.awt.Color(102, 102, 102));
-        quantityLabel.setText("Qty");
-
-        sizeorvariationstaticLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        sizeorvariationstaticLabel.setForeground(new java.awt.Color(0, 0, 0));
-        sizeorvariationstaticLabel.setText("Size/Variation");
-
-        sizeorVariationLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        sizeorVariationLabel.setForeground(new java.awt.Color(102, 102, 102));
-        sizeorVariationLabel.setText("What Size");
-
-        dashLineLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        dashLineLabel3.setForeground(new java.awt.Color(255, 204, 102));
-        dashLineLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        dashLineLabel3.setText("______________________");
-
-        subtotalstaticlabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        subtotalstaticlabel.setForeground(new java.awt.Color(0, 0, 0));
-        subtotalstaticlabel.setText("Subtotal");
-
-        totalstaticlabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        totalstaticlabel.setForeground(new java.awt.Color(0, 0, 0));
-        totalstaticlabel.setText("Total");
-
-        subTotalamountlabel.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
-        subTotalamountlabel.setForeground(new java.awt.Color(102, 102, 102));
-        subTotalamountlabel.setText("Amount");
-
-        totalAmountLabel.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
-        totalAmountLabel.setForeground(new java.awt.Color(102, 102, 102));
-        totalAmountLabel.setText("Amount");
-
         jToggleButton2.setBackground(new java.awt.Color(255, 204, 102));
         jToggleButton2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jToggleButton2.setForeground(new java.awt.Color(225, 135, 44));
@@ -933,6 +944,19 @@ public void updateMangoBravoBill() {
         jButton9.setForeground(new java.awt.Color(225, 135, 44));
         jButton9.setText("Done");
 
+        billTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane3.setViewportView(billTable);
+
         javax.swing.GroupLayout BillPanelLayout = new javax.swing.GroupLayout(BillPanel);
         BillPanel.setLayout(BillPanelLayout);
         BillPanelLayout.setHorizontalGroup(
@@ -945,9 +969,6 @@ public void updateMangoBravoBill() {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(dateLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(BillPanelLayout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(dashLineLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(BillPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(jToggleButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(BillPanelLayout.createSequentialGroup()
@@ -956,39 +977,11 @@ public void updateMangoBravoBill() {
                     .addGroup(BillPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(BillPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(dashLinelabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, BillPanelLayout.createSequentialGroup()
-                            .addGap(6, 6, 6)
-                            .addGroup(BillPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(BillPanelLayout.createSequentialGroup()
-                                    .addComponent(productStaticLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(productNameLabel))
-                                .addGroup(BillPanelLayout.createSequentialGroup()
-                                    .addGap(6, 6, 6)
-                                    .addGroup(BillPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(BillPanelLayout.createSequentialGroup()
-                                            .addComponent(sizeorvariationstaticLabel)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(sizeorVariationLabel))
-                                        .addGroup(BillPanelLayout.createSequentialGroup()
-                                            .addComponent(jLabel14)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(quantityLabel))))
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, BillPanelLayout.createSequentialGroup()
-                                    .addGap(0, 0, Short.MAX_VALUE)
-                                    .addComponent(dashLineLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGroup(BillPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(BillPanelLayout.createSequentialGroup()
-                                .addComponent(subtotalstaticlabel)
-                                .addGap(103, 103, 103)
-                                .addComponent(subTotalamountlabel))
-                            .addGroup(BillPanelLayout.createSequentialGroup()
-                                .addComponent(totalstaticlabel)
-                                .addGap(115, 115, 115)
-                                .addComponent(totalAmountLabel)))))
-                .addGap(27, 27, 27))
+                    .addComponent(dashLinelabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(BillPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(223, 223, 223))
         );
         BillPanelLayout.setVerticalGroup(
             BillPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1001,35 +994,9 @@ public void updateMangoBravoBill() {
                         .addComponent(dateLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(13, 13, 13)
                 .addComponent(dashLinelabel1)
-                .addGap(16, 16, 16)
-                .addGroup(BillPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(productStaticLabel)
-                    .addComponent(productNameLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(BillPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel14)
-                    .addComponent(quantityLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(BillPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(sizeorvariationstaticLabel)
-                    .addComponent(sizeorVariationLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(dashLineLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(156, 156, 156)
-                .addComponent(dashLineLabel3)
-                .addGap(95, 95, 95)
-                .addGroup(BillPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(subtotalstaticlabel)
-                    .addGroup(BillPanelLayout.createSequentialGroup()
-                        .addGap(2, 2, 2)
-                        .addComponent(subTotalamountlabel)))
-                .addGap(18, 18, 18)
-                .addGroup(BillPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(totalstaticlabel)
-                    .addGroup(BillPanelLayout.createSequentialGroup()
-                        .addGap(5, 5, 5)
-                        .addComponent(totalAmountLabel)))
-                .addGap(32, 32, 32)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(44, 44, 44)
                 .addComponent(jToggleButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jToggleButton3)
@@ -3225,11 +3192,11 @@ public void updateMangoBravoBill() {
         jPanel71.setLayout(jPanel71Layout);
         jPanel71Layout.setHorizontalGroup(
             jPanel71Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 904, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 930, Short.MAX_VALUE)
         );
         jPanel71Layout.setVerticalGroup(
             jPanel71Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1178, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 695, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("cakes", jPanel71);
@@ -4177,7 +4144,7 @@ public void updateMangoBravoBill() {
                     .addComponent(jPanel72, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel76, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel80, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(678, Short.MAX_VALUE))
+                .addContainerGap(681, Short.MAX_VALUE))
         );
 
         jScrollPane2.setViewportView(breadsandsweetsPanel);
@@ -4186,7 +4153,7 @@ public void updateMangoBravoBill() {
         jPanel11.setLayout(jPanel11Layout);
         jPanel11Layout.setHorizontalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 904, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 930, Short.MAX_VALUE)
         );
         jPanel11Layout.setVerticalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -4205,14 +4172,14 @@ public void updateMangoBravoBill() {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 1376, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 756, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -4355,25 +4322,28 @@ public void updateMangoBravoBill() {
     }
     mangoBravoQuantity.setText(String.valueOf(mangoQty));
     updateMangoPrice();
-    updateMangoBravoBill();
-    
-    if (mangoQty == 0) {
-        mangoRadioButton.setSelected(false);
-        removeMangoBravoFromBill(); // This method should clear the bill panel for Mango Bravo
-    }
+    if (mangoRadioButton.isSelected()) {
+            addOrUpdateOrderItem(new OrderItem("Mango Bravo", mangoQty, mangoBravocurrentSelectedSize, mangoBasePrice));
+        }
+        // Optional: if mangoQty == 0, deselect radio and remove
+        if (mangoQty == 0) {
+            mangoRadioButton.setSelected(false);
+            removeOrderItem("Mango Bravo");
+        }
     }//GEN-LAST:event_minusButtonMangoActionPerformed
 
     private void redVelvetMinusButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_redVelvetMinusButtonActionPerformed
         if(redVelvetQty>0){
            redVelvetQty--;
            redvelvetlabel.setText(String.valueOf(redVelvetQty));
-           updateRedVelvetPrice();
-           updateRedVelvetBill();
-    
-    if (redVelvetQty == 0) {
-        redVelvetRadioButton.setSelected(false);
-        removeRedVelvetFromBill(); // This method should clear the bill panel for Mango Bravo
-    }
+           if (redVelvetRadioButton.isSelected()) {
+            addOrUpdateOrderItem(new OrderItem("Red Velvet Cake", redVelvetQty, redVelvetCurrentSelectedSize, redVelvetBasePrice));
+        }
+        // Optional: if mangoQty == 0, deselect radio and remove
+        if (redVelvetQty == 0) {
+            redVelvetRadioButton.setSelected(false);
+            removeOrderItem(" Red Velvet Cake");
+        }
        }
     }//GEN-LAST:event_redVelvetMinusButtonActionPerformed
 
@@ -4501,7 +4471,9 @@ public void updateMangoBravoBill() {
     mangoQty++;
     mangoBravoQuantity.setText(String.valueOf(mangoQty));
     updateMangoPrice();
-    updateMangoBravoBill();
+    if (mangoRadioButton.isSelected()) {
+        addOrUpdateOrderItem(new OrderItem("Mango Bravo", mangoQty, mangoBravocurrentSelectedSize, mangoBasePrice));
+    }
     
     }//GEN-LAST:event_addButtonMangoActionPerformed
 
@@ -4517,7 +4489,9 @@ public void updateMangoBravoBill() {
        redVelvetQty ++;
        redvelvetlabel.setText(String.valueOf(redVelvetQty));
        updateRedVelvetPrice();
-       updateRedVelvetBill();
+       addOrUpdateOrderItem(new OrderItem(
+            "Red Velvet Price", redVelvetQty, redVelvetCurrentSelectedSize, redVelvetBasePrice
+        ));
     }//GEN-LAST:event_RedVelvetPlusButtonActionPerformed
 
     private void strawberryshortplusbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_strawberryshortplusbuttonActionPerformed
@@ -4687,6 +4661,7 @@ public void updateMangoBravoBill() {
     private javax.swing.JToggleButton bentoCakeSizebutton;
     private javax.swing.JButton bentoCakeminusButton;
     private javax.swing.JLabel bentocakelbl;
+    private javax.swing.JTable billTable;
     private javax.swing.JPanel breadsandsweetsPanel;
     private javax.swing.JToggleButton btn10PcsMilkyDonut;
     private javax.swing.JToggleButton btn12PcsBrownies;
@@ -4748,13 +4723,10 @@ public void updateMangoBravoBill() {
     private javax.swing.JLabel caramelFlanDeLecheCakePrice;
     private javax.swing.JLabel cheeseCakePrice;
     private javax.swing.JButton customCakeButton;
-    private javax.swing.JLabel dashLineLabel2;
-    private javax.swing.JLabel dashLineLabel3;
     private javax.swing.JLabel dashLinelabel1;
     private javax.swing.JLabel dateLabel;
     private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -4886,6 +4858,7 @@ public void updateMangoBravoBill() {
     private javax.swing.JRadioButton jRadioButton8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JToggleButton jToggleButton10;
     private javax.swing.JToggleButton jToggleButton18;
@@ -4929,18 +4902,13 @@ public void updateMangoBravoBill() {
     private javax.swing.JLabel miniCupcakesPrice;
     private javax.swing.JButton minusButtonMango;
     private javax.swing.JLabel piscesCupcakesPrice;
-    private javax.swing.JLabel productNameLabel;
-    private javax.swing.JLabel productStaticLabel;
     private javax.swing.JPanel productsPanel;
-    private javax.swing.JLabel quantityLabel;
     private javax.swing.JToggleButton redVelvet5x2sizeButton;
     private javax.swing.JToggleButton redVelvet6x2sizebutton;
     private javax.swing.JLabel redVelvetCakePrice;
     private javax.swing.JButton redVelvetMinusButton;
     private javax.swing.JRadioButton redVelvetRadioButton;
     private javax.swing.JLabel redvelvetlabel;
-    private javax.swing.JLabel sizeorVariationLabel;
-    private javax.swing.JLabel sizeorvariationstaticLabel;
     private javax.swing.JLabel sliceCheesecakePrice;
     private javax.swing.JLabel slicecheesecakelblqty;
     private javax.swing.JLabel strawberryShortCakePrice;
@@ -4952,10 +4920,6 @@ public void updateMangoBravoBill() {
     private javax.swing.JButton strawberryshortminusbutton;
     private javax.swing.JButton strawberryshortplusbutton;
     private javax.swing.JLabel strawberyshortcakelbl;
-    private javax.swing.JLabel subTotalamountlabel;
-    private javax.swing.JLabel subtotalstaticlabel;
-    private javax.swing.JLabel totalAmountLabel;
-    private javax.swing.JLabel totalstaticlabel;
     private javax.swing.JTextField txtSearch;
     private javax.swing.JLabel yemaCakeLabelQty;
     // End of variables declaration//GEN-END:variables
