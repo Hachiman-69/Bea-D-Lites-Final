@@ -10880,10 +10880,11 @@ public class Dashboard extends javax.swing.JFrame {
                         .addComponent(AmountOrders))
                     .addComponent(jLabel96, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ShippingOrder)
-                    .addComponent(AmountOrders2)
-                    .addComponent(jLabel97, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel97, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(ShippingOrder)
+                        .addComponent(AmountOrders2)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addComponent(jLabel22)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -11090,29 +11091,29 @@ public class Dashboard extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void DashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DashboardActionPerformed
-        jTabbedPane1.setSelectedIndex(0);
-    }//GEN-LAST:event_DashboardActionPerformed
-
-    private void OrdersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OrdersActionPerformed
-       jTabbedPane1.setSelectedIndex(1);
-    }//GEN-LAST:event_OrdersActionPerformed
-
-    private void InventoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InventoryActionPerformed
-        jTabbedPane1.setSelectedIndex(2);
-    }//GEN-LAST:event_InventoryActionPerformed
-
-    private void ProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ProductActionPerformed
-       jTabbedPane1.setSelectedIndex(3);
-    }//GEN-LAST:event_ProductActionPerformed
-
-    private void PointOfSaleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PointOfSaleActionPerformed
-       jTabbedPane1.setSelectedIndex(4);
-    }//GEN-LAST:event_PointOfSaleActionPerformed
-
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void PointOfSaleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PointOfSaleActionPerformed
+       
+    }//GEN-LAST:event_PointOfSaleActionPerformed
+
+    private void ProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ProductActionPerformed
+       
+    }//GEN-LAST:event_ProductActionPerformed
+
+    private void InventoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InventoryActionPerformed
+       
+    }//GEN-LAST:event_InventoryActionPerformed
+
+    private void OrdersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OrdersActionPerformed
+        
+    }//GEN-LAST:event_OrdersActionPerformed
+
+    private void DashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DashboardActionPerformed
+        
+    }//GEN-LAST:event_DashboardActionPerformed
 
     /**
      * @param args the command line arguments

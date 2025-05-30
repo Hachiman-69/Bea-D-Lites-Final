@@ -95,6 +95,10 @@ public class BeaPOS extends javax.swing.JFrame {
     
     private String mangoBravocurrentSelectedSize = "4x2";
     
+    private String redVelvetCurrentSelectedSize = "5x2";
+    
+    
+    
    
 
 
@@ -104,10 +108,6 @@ public class BeaPOS extends javax.swing.JFrame {
      * Creates new form BeaPOS
      */
     
-    
-    
-
-    String mangoBravoProductName = "Mango Bravo";
     
     
     
@@ -154,11 +154,13 @@ public class BeaPOS extends javax.swing.JFrame {
     //red velvet action listeners
     redVelvet6x2sizebutton.addActionListener(e->{
     redVelvetBasePrice = 799;
+    redVelvetCurrentSelectedSize = "6x2";
     updateRedVelvetPrice();
     });
     
     redVelvet5x2sizeButton.addActionListener(e->{
     redVelvetBasePrice = 499;
+    redVelvetCurrentSelectedSize = "5x2";
     updateRedVelvetPrice();
     });
     
@@ -336,7 +338,14 @@ public class BeaPOS extends javax.swing.JFrame {
         removeMangoBravoFromBill();
     }
 });
-    
+   
+    redVelvetRadioButton.addActionListener(e -> {
+    if (redVelvetRadioButton.isSelected()) {
+        updateRedVelvetBill();
+    } else {
+        removeRedVelvetFromBill();
+    }
+});
       }
     //methods for actionListeners
 private void removeMangoBravoFromBill() {
@@ -346,6 +355,14 @@ private void removeMangoBravoFromBill() {
     quantityLabel.setText("");
     sizeorVariationLabel.setText("");
 }
+private void removeRedVelvetFromBill() {
+    subTotalamountlabel.setText("₱0.00");
+    totalAmountLabel.setText("₱0.00");
+    productNameLabel.setText("");
+    quantityLabel.setText("");
+    sizeorVariationLabel.setText("");
+}
+
 
 public void updateMangoBravoBill() {
     
@@ -366,7 +383,26 @@ public void updateMangoBravoBill() {
     sizeorVariationLabel.setText(size);
 
 }
+ 
+ public void updateRedVelvetBill() {
     
+    double unitPrice = 0.0;
+    String size = "";
+    switch(redVelvetCurrentSelectedSize) {
+        case "6x2": size = "6 x 2\""; unitPrice = 799.00; break;
+        case "5x2": size = "5 x 2\""; unitPrice = 499.00; break;
+       
+        default: size = "Unknown Size"; unitPrice = 0.0; break;
+    }
+    double subtotal = redVelvetQty * unitPrice;
+    
+    subTotalamountlabel.setText(String.format("₱%.2f", subtotal));
+    totalAmountLabel.setText(String.format("₱%.2f", subtotal));
+    productNameLabel.setText("Red Velvet");
+    quantityLabel.setText(String.valueOf(redVelvetQty));
+    sizeorVariationLabel.setText(size);
+
+}
     
     
     
@@ -407,17 +443,17 @@ public void updateMangoBravoBill() {
         jLabel4 = new javax.swing.JLabel();
         backButton = new javax.swing.JButton();
         BillPanel = new javax.swing.JPanel();
-        jLabel7 = new javax.swing.JLabel();
+        dashLinelabel1 = new javax.swing.JLabel();
         BillLabel = new javax.swing.JLabel();
         dateLabel = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
+        dashLineLabel2 = new javax.swing.JLabel();
         productStaticLabel = new javax.swing.JLabel();
         productNameLabel = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         quantityLabel = new javax.swing.JLabel();
         sizeorvariationstaticLabel = new javax.swing.JLabel();
         sizeorVariationLabel = new javax.swing.JLabel();
-        jLabel29 = new javax.swing.JLabel();
+        dashLineLabel3 = new javax.swing.JLabel();
         subtotalstaticlabel = new javax.swing.JLabel();
         totalstaticlabel = new javax.swing.JLabel();
         subTotalamountlabel = new javax.swing.JLabel();
@@ -818,10 +854,10 @@ public void updateMangoBravoBill() {
 
         BillPanel.setBackground(new java.awt.Color(255, 255, 153));
 
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(255, 204, 102));
-        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel7.setText("------------------------");
+        dashLinelabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        dashLinelabel1.setForeground(new java.awt.Color(255, 204, 102));
+        dashLinelabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        dashLinelabel1.setText("------------------------");
 
         BillLabel.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         BillLabel.setForeground(new java.awt.Color(225, 135, 44));
@@ -832,10 +868,10 @@ public void updateMangoBravoBill() {
         dateLabel.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         dateLabel.setText("day");
 
-        jLabel11.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel11.setForeground(new java.awt.Color(255, 204, 102));
-        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel11.setText("------------------------");
+        dashLineLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        dashLineLabel2.setForeground(new java.awt.Color(255, 204, 102));
+        dashLineLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        dashLineLabel2.setText("------------------------");
 
         productStaticLabel.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
         productStaticLabel.setForeground(new java.awt.Color(0, 0, 0));
@@ -861,10 +897,10 @@ public void updateMangoBravoBill() {
         sizeorVariationLabel.setForeground(new java.awt.Color(102, 102, 102));
         sizeorVariationLabel.setText("What Size");
 
-        jLabel29.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel29.setForeground(new java.awt.Color(255, 204, 102));
-        jLabel29.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel29.setText("______________________");
+        dashLineLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        dashLineLabel3.setForeground(new java.awt.Color(255, 204, 102));
+        dashLineLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        dashLineLabel3.setText("______________________");
 
         subtotalstaticlabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         subtotalstaticlabel.setForeground(new java.awt.Color(0, 0, 0));
@@ -910,17 +946,7 @@ public void updateMangoBravoBill() {
                         .addComponent(dateLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(BillPanelLayout.createSequentialGroup()
                         .addGap(6, 6, 6)
-                        .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(BillPanelLayout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(subtotalstaticlabel)
-                        .addGap(103, 103, 103)
-                        .addComponent(subTotalamountlabel))
-                    .addGroup(BillPanelLayout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(totalstaticlabel)
-                        .addGap(115, 115, 115)
-                        .addComponent(totalAmountLabel))
+                        .addComponent(dashLineLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(BillPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(jToggleButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -931,26 +957,37 @@ public void updateMangoBravoBill() {
                         .addGap(10, 10, 10)
                         .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(BillPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(BillPanelLayout.createSequentialGroup()
-                            .addGap(6, 6, 6)
-                            .addComponent(productStaticLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(productNameLabel))
-                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(BillPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(dashLinelabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, BillPanelLayout.createSequentialGroup()
-                            .addGap(12, 12, 12)
+                            .addGap(6, 6, 6)
                             .addGroup(BillPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(sizeorvariationstaticLabel)
                                 .addGroup(BillPanelLayout.createSequentialGroup()
-                                    .addComponent(jLabel14)
+                                    .addComponent(productStaticLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(quantityLabel))))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, BillPanelLayout.createSequentialGroup()
-                            .addGap(6, 6, 6)
-                            .addGroup(BillPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(sizeorVariationLabel)
-                                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                    .addComponent(productNameLabel))
+                                .addGroup(BillPanelLayout.createSequentialGroup()
+                                    .addGap(6, 6, 6)
+                                    .addGroup(BillPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(BillPanelLayout.createSequentialGroup()
+                                            .addComponent(sizeorvariationstaticLabel)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(sizeorVariationLabel))
+                                        .addGroup(BillPanelLayout.createSequentialGroup()
+                                            .addComponent(jLabel14)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(quantityLabel))))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, BillPanelLayout.createSequentialGroup()
+                                    .addGap(0, 0, Short.MAX_VALUE)
+                                    .addComponent(dashLineLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(BillPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(BillPanelLayout.createSequentialGroup()
+                                .addComponent(subtotalstaticlabel)
+                                .addGap(103, 103, 103)
+                                .addComponent(subTotalamountlabel))
+                            .addGroup(BillPanelLayout.createSequentialGroup()
+                                .addComponent(totalstaticlabel)
+                                .addGap(115, 115, 115)
+                                .addComponent(totalAmountLabel)))))
                 .addGap(27, 27, 27))
         );
         BillPanelLayout.setVerticalGroup(
@@ -963,24 +1000,24 @@ public void updateMangoBravoBill() {
                         .addGap(4, 4, 4)
                         .addComponent(dateLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(13, 13, 13)
-                .addComponent(jLabel7)
+                .addComponent(dashLinelabel1)
                 .addGap(16, 16, 16)
                 .addGroup(BillPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(productStaticLabel)
                     .addComponent(productNameLabel))
-                .addGap(50, 50, 50)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(BillPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14)
                     .addComponent(quantityLabel))
-                .addGap(42, 42, 42)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(BillPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(sizeorvariationstaticLabel)
                     .addComponent(sizeorVariationLabel))
-                .addGap(54, 54, 54)
-                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34)
-                .addComponent(jLabel29)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(dashLineLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(156, 156, 156)
+                .addComponent(dashLineLabel3)
+                .addGap(95, 95, 95)
                 .addGroup(BillPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(subtotalstaticlabel)
                     .addGroup(BillPanelLayout.createSequentialGroup()
@@ -992,7 +1029,7 @@ public void updateMangoBravoBill() {
                     .addGroup(BillPanelLayout.createSequentialGroup()
                         .addGap(5, 5, 5)
                         .addComponent(totalAmountLabel)))
-                .addGap(109, 109, 109)
+                .addGap(32, 32, 32)
                 .addComponent(jToggleButton2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jToggleButton3)
@@ -4331,6 +4368,12 @@ public void updateMangoBravoBill() {
            redVelvetQty--;
            redvelvetlabel.setText(String.valueOf(redVelvetQty));
            updateRedVelvetPrice();
+           updateRedVelvetBill();
+    
+    if (redVelvetQty == 0) {
+        redVelvetRadioButton.setSelected(false);
+        removeRedVelvetFromBill(); // This method should clear the bill panel for Mango Bravo
+    }
        }
     }//GEN-LAST:event_redVelvetMinusButtonActionPerformed
 
@@ -4473,6 +4516,8 @@ public void updateMangoBravoBill() {
     private void RedVelvetPlusButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RedVelvetPlusButtonActionPerformed
        redVelvetQty ++;
        redvelvetlabel.setText(String.valueOf(redVelvetQty));
+       updateRedVelvetPrice();
+       updateRedVelvetBill();
     }//GEN-LAST:event_RedVelvetPlusButtonActionPerformed
 
     private void strawberryshortplusbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_strawberryshortplusbuttonActionPerformed
@@ -4703,13 +4748,14 @@ public void updateMangoBravoBill() {
     private javax.swing.JLabel caramelFlanDeLecheCakePrice;
     private javax.swing.JLabel cheeseCakePrice;
     private javax.swing.JButton customCakeButton;
+    private javax.swing.JLabel dashLineLabel2;
+    private javax.swing.JLabel dashLineLabel3;
+    private javax.swing.JLabel dashLinelabel1;
     private javax.swing.JLabel dateLabel;
     private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel43;
@@ -4727,7 +4773,6 @@ public void updateMangoBravoBill() {
     private javax.swing.JLabel jLabel66;
     private javax.swing.JLabel jLabel67;
     private javax.swing.JLabel jLabel68;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel70;
     private javax.swing.JLabel jLabel71;
     private javax.swing.JLabel jLabel72;

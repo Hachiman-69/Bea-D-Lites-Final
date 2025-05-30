@@ -1553,10 +1553,12 @@
                                           <Component id="jLabel96" max="32767" attributes="0"/>
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="3" attributes="0">
-                                          <Component id="ShippingOrder" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="AmountOrders2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="jLabel97" alignment="0" min="-2" pref="16" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="3" attributes="0">
+                                              <Component id="ShippingOrder" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="AmountOrders2" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          </Group>
                                       </Group>
                                       <EmptySpace pref="12" max="32767" attributes="0"/>
                                       <Component id="jLabel22" min="-2" max="-2" attributes="0"/>
